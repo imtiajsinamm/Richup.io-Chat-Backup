@@ -3,9 +3,12 @@
   "name": "Richup Chat Saver",
   "version": "0.3.0",
   "description": "Captures the live Richup.io chat per room and shows it in Richup's own chat style. Copy or export as txt, json or html.",
-  "permissions": ["storage", "unlimitedStorage"],
+  "permissions": ["storage", "unlimitedStorage", "sidePanel"],
   "action": { "default_title": "Open saved Richup chats" },
   "background": { "service_worker": "background.js" },
+  "side_panel": {
+    "default_path": "viewer.html"
+  },
   "content_scripts": [
     {
       "matches": ["https://richup.io/*"],
