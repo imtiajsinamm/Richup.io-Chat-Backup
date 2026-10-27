@@ -1,5 +1,4 @@
 (() => {
-  const { toText } = window.RCC;
   const { buildPanel } = window.RCCView;
   const $ = id => document.getElementById(id);
 
@@ -45,67 +44,7 @@
     host.append(panel);
     const list = panel.querySelector(".list");
     list.scrollTop = atBottom ? list.scrollHeight : oldTop;
-
-    ["copy", "txt", "json", "html", "del"].forEach(id => { const el = $(id); if (el) el.disabled = !current; });
   }
-
-  const flash = (btn, t) => {
-    const o = btn.textContent;
-    btn.textContent = t;
-    setTimeout(() => (btn.textContent = o), 1200);
-  };
-
-  function download(name, data, mime) {
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(new Blob([data], { type: mime }));
-    a.download = name;
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-  }
-
-  const room = () => rooms[current];
-
-  $("copy").onclick = async () => {
-    try { await navigator.clipboard.writeText(toText(room().messages)); flash($("copy"), "Copied"); }
-    catch { flash($("copy"), "Failed"); }
-  };
-  $("txt").onclick = () => download(`richup-${current}.txt`, toText(room().messages), "text/plain");
-  $("json").onclick = () => download(`richup-${current}.json`, JSON.stringify(room(), null, 2), "application/json");
-
-  async function inlineFonts(css) {
-    const urls = [...new Set(
-      [...css.matchAll(/url\((?:["']?)([^)"']+\.woff2(?:\?[^)"]+)?)\1\)/g)]
-        .map(m => m[1])
-    )];
-
-    for (const u of urls) {
-      const buf = await (await fetch(chrome.runtime.getURL(u))).arrayBuffer();
-      const dataUrl = await new Promise(res => {
-        const fr = new FileReader();
-        fr.onload = () => res(fr.result);
-        fr.readAsDataURL(new Blob([buf], { type: "font/woff2" }));
-      });
-      css = css.split(u).join(dataUrl);
-    }
-    return css;
-  }
-
-  $("html").onclick = async () => {
-    const btn = $("html");
-    try {
-      const css = await inlineFonts(await (await fetch(chrome.runtime.getURL("viewer.css")).text()));
-      const panel = $("chatHost").querySelector(".panel").cloneNode(true);
-      const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Richup chat ${current}</title><style>${css}</style></head><body class="export"><div class="export-wrap">${panel.outerHTML}</div></body></html>`;
-      download(`richup-chat-${current}.html`, html, "text/html");
-    } catch (e) { flash(btn, "Failed"); }
-  };
-
-  $("del").onclick = async () => {
-    if (!current || !confirm(`Delete the saved chat for room ${current}? This cannot be undone.`)) return;
-    await chrome.storage.local.remove(`room:${current}`);
-    current = null;
-    loadAll();
-  };
 
   let t = null;
   chrome.storage.onChanged.addListener((ch, area) => {
