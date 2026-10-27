@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Richup saved chats</title>
+  <link rel="stylesheet" href="viewer.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="panel side">
+      <div class="panel-head">Saved rooms</div>
+      <div id="rooms" class="rooms"></div>
+    </aside>
+    <main>
+      <div class="toolbar">
+        <button class="btn" id="copy">Copy text</button>
+        <button class="btn" id="txt">.txt</button>
+        <button class="btn" id="json">.json</button>
+        <button class="btn" id="html">Save as .html</button>
+        <button class="btn danger" id="del">Delete room</button>
+      </div>
+      <div id="chatHost"></div>
+    </main>
+  </div>
+  <script src="core.js"></script>
+  <script src="render.js"></script>
+  <script src="viewer.js"></script>
+</body>
+</html>
